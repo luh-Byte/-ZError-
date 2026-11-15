@@ -54,6 +54,15 @@ python "D:\ZError\题库总库\build\build_tiku.py"
 python "D:\ZError\题库总库\build\build_tiku.py" "D:\somewhere\github_tiku"
 ```
 
+## 版本记录
+
+本目录是 git 仓库（`.git` 在本目录内），版本差异只看提交信息，文件名不带版本后缀。
+
+- **纳管**：`README.md`、`质检报告.md`、`索引.json`、`仅答案序列_杨pub.json`、`build/build_tiku.py`
+- **忽略**：`tiku_master.json`、`tiku_master.csv`、`分课程/` —— 这些都是 `build_tiku.py` 从 zip 重新生成的产物，不重复占版本库空间
+
+提交信息写明「解决了什么 / 用了什么办法 / 时间 / 验证结果」。
+
 ## 注意
 
 - 判断题的 `正确/错误` 是由源数据的 `0/1`、`A/B` 映射而来，映射规则经抽样题干语义确认，**没有全量校验条件**。批量使用前建议先小样本试答。
