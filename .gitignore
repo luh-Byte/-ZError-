@@ -1,0 +1,8 @@
+# 可再生产物：由 build/build_tiku.py 从 github_tiku.zip 重新生成，不进版本库
+tiku_master.json
+tiku_master.csv
+分课程/
+
+# Python 缓存
+__pycache__/
+*.pyc
