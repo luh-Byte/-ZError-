@@ -17,6 +17,7 @@
 | `索引.json` | 各来源 / 题型 / 课程的题量汇总，给程序读 |
 | `仅答案序列_杨pub.json` | 两个只有答案、没有题干的专题数据，无法当题目用，单独留存 |
 | `build/build_tiku.py` | 生成脚本，可直接重跑复现全部产物 |
+| `build/import_to_zerror.py` | 导入 ZError 本地题库的脚本（默认干跑，`--apply` 才写库） |
 
 ## 字段
 
@@ -42,6 +43,28 @@
 - **只想用干净的题**：筛掉 `flags` 非空的记录，剩 **28780 题（97.6%）**。
 - **要复核跨库答案不一致的题**：筛 `flags` 里含「跨源答案冲突」的 44 条。
 
+## 导入 ZError
+
+ZError 的题库就是它的 SQLite 库 `C:\Users\liuyuhe\AppData\Local\ZError\airesponses.db` 的 `AIResponses` 表。写入口径按程序自带 SQL 对齐：
+
+| 列 | 口径 |
+|---|---|
+| `Question` | 题干 |
+| `Options` | `A. xxx  B. yyy`（两个空格分隔）；判断题/填空题为 NULL |
+| `Answer` | **选项文字**而非字母：单选=正确选项原文；多选=各选项文字用 `###` 连接；判断=`正确`/`错误`；填空=答案正文（多空 `###`） |
+| `QuestionType` | `single` / `multiple` / `judgement` / `completion` |
+| `IsAi` | 0（不是 AI 生成，是题库） |
+| `FolderId` / `FolderName` | 按课程分文件夹，`ParentId=0` |
+
+```powershell
+# 先看统计（不写库）
+python "D:\ZError\题库总库\build\import_to_zerror.py"
+# 实际导入（导入前请先复制一份 airesponses.db 当回滚点）
+python "D:\ZError\题库总库\build\import_to_zerror.py" --apply
+```
+
+已导入 **28863 题**、17 个课程文件夹；跳过 422 条缺答案/缺选项的、3 条答案无法转成选项文字的，课内同题干重复去掉 191 条。
+
 ## 重新生成
 
 ```powershell
@@ -58,7 +81,7 @@ python "D:\ZError\题库总库\build\build_tiku.py" "D:\somewhere\github_tiku"
 
 本目录是 git 仓库（`.git` 在本目录内），版本差异只看提交信息，文件名不带版本后缀。
 
-- **纳管**：`README.md`、`质检报告.md`、`索引.json`、`仅答案序列_杨pub.json`、`build/build_tiku.py`
+- **纳管**：`README.md`、`质检报告.md`、`索引.json`、`仅答案序列_杨pub.json`、`build/build_tiku.py`、`build/import_to_zerror.py`
 - **忽略**：`tiku_master.json`、`tiku_master.csv`、`分课程/` —— 这些都是 `build_tiku.py` 从 zip 重新生成的产物，不重复占版本库空间
 
 提交信息写明「解决了什么 / 用了什么办法 / 时间 / 验证结果」。
