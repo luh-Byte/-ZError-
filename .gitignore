@@ -3,6 +3,11 @@ tiku_master.json
 tiku_master.csv
 分课程/
 
+# 分发产物：从数据库重新导出/压缩得到，不进版本库
+打包/tiku_all.json
+打包/tiku_all.csv
+ZError全量题库.zip
+
 # 截图原始素材：题干已整理进 截图题库_焊接结构生产.json（含 image 字段回溯），图片本身不进版本库
 屏幕截图*.png
 

@@ -20,6 +20,8 @@
 | `build/build_tiku.py` | 生成脚本，可直接重跑复现全部产物 |
 | `build/import_to_zerror.py` | 导入 ZError 本地题库的脚本（默认干跑，`--apply` 才写库） |
 | `build/import_screenshots.py` | 把 `截图题库_焊接结构生产.json` 导入 ZError「焊接结构生产」文件夹（默认干跑，`--apply` 才写库并自动备份 db） |
+| `打包/` | 分发包的制作现场：`tiku_all.json`/`.csv`（全量导出）、`import_tiku.py`、`导入ZError.bat`、`导入说明.md` |
+| `ZError全量题库.zip` | 发给别人的成品压缩包（4.8 MB，28908 题，解压后双击 `导入ZError.bat` 即可导入） |
 
 ## 字段
 
@@ -83,6 +85,23 @@ python "D:\ZError\题库总库\build\import_screenshots.py" --apply
 
 脚本每次 `--apply` 前自动复制 `airesponses.db.bak-时间戳` 作为回滚点，并按题干去重，重复运行不会重复插入。
 
+## 打包分发
+
+把本机 ZError 库里的全部真题（`IsAi=0`、排除默认文件夹）导出，做成别人解压即导入的包：
+
+```powershell
+# 1. 从数据库导出全量（写 打包/tiku_all.json + tiku_all.csv）
+python "D:\ZError\题库总库\build\export_all_tiku.py"
+# 2. 重新压包（打包/ 内五个文件 → ZError全量题库.zip）
+```
+
+收件人侧：安装 ZError 并先启动一次 → 关闭 → 解压 → 双击 `导入ZError.bat`（或 `python import_tiku.py --apply`）。
+脚本按「文件夹 + 题干」判重，重复导入不会翻倍，每次写入前自动备份 `airesponses.db.bak-时间戳`。
+
+- 全量：18 个课程文件夹、28908 题（单选 12523 / 多选 6335 / 判断 7060 / 填空 2990）
+- 导出完整性已核对：JSON 28908 条与库内逐条比对，题型/选项/答案字段 0 处不一致
+- 空库导入已实测：自动建 `AIResponses`、`Folders` 表并写入 28908 条
+
 ## 重新生成
 
 ```powershell
@@ -99,9 +118,10 @@ python "D:\ZError\题库总库\build\build_tiku.py" "D:\somewhere\github_tiku"
 
 本目录是 git 仓库（`.git` 在本目录内），版本差异只看提交信息，文件名不带版本后缀。
 
-- **纳管**：`README.md`、`质检报告.md`、`索引.json`、`仅答案序列_杨pub.json`、`截图题库_焊接结构生产.json`、`build/build_tiku.py`、`build/import_to_zerror.py`、`build/import_screenshots.py`
+- **纳管**：`README.md`、`质检报告.md`、`索引.json`、`仅答案序列_杨pub.json`、`截图题库_焊接结构生产.json`、`build/build_tiku.py`、`build/import_to_zerror.py`、`build/import_screenshots.py`、`build/export_all_tiku.py`、`打包/import_tiku.py`、`打包/导入ZError.bat`、`打包/导入说明.md`
 - **忽略**：`tiku_master.json`、`tiku_master.csv`、`分课程/` —— 这些都是 `build_tiku.py` 从 zip 重新生成的产物，不重复占版本库空间
 - **忽略**：`屏幕截图*.png` —— 题干与选项已全部落进 `截图题库_焊接结构生产.json`，每条记录用 `image` 字段回溯原图
+- **忽略**：`打包/tiku_all.json`、`打包/tiku_all.csv`、`ZError全量题库.zip` —— 由数据库重新导出/压缩得到，不进版本库
 
 提交信息写明「解决了什么 / 用了什么办法 / 时间 / 验证结果」。
 
